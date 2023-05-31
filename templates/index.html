@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My AI</title>
+
+   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+<body>
+   
+    <div class="chat-container">
+        <h1>My AI</h1>
+        <div id="message-container"></div>
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Type your message..." autofocus/>
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+
+    <div id="attribution">
+        Developed By ChatGPT, Powered By ChatGPT, Debugged By Kunj Prajapati &#10084;
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function () {
+        $('#user-input').keydown(function (e) {
+            if (e.keyCode === 13) {
+                sendMessage();
+            }
+        });
+
+        $('#send-btn').click(function () {
+        sendMessage();
+        });
+
+        function sendMessage() {
+            var userInput = $('#user-input').val();
+            $('#user-input').val('');
+            $('#message-container').append('<div class="message user-message">' + userInput + '</div>');
+            scrollToBottom();
+
+            $.ajax({
+                type: 'POST',
+                url: '/get-response',
+                contentType: 'application/json',
+                data: JSON.stringify({ 'message': userInput }),
+                success: function (data) {
+                    var botResponse = data.response;
+                    $('#message-container').append('<div class="message bot-message">' + botResponse + '</div>');
+                    scrollToBottom();
+                }
+            });
+        }
+
+        function scrollToBottom() {
+            $('#message-container').scrollTop($('#message-container')[0].scrollHeight);
+        }
+    });
+</script>
+
+</body>
+</html>
